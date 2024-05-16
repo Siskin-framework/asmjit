@@ -35,12 +35,21 @@ int main(int argc, char* argv[]) {
     unsigned((ASMJIT_LIBRARY_VERSION      ) & 0xFF));
 
   printf("Usage:\n");
-  printf("  --help        Show usage only\n");
-  printf("  --arch=<ARCH> Select architecture to run ('all' by default)\n");
-  printf("  --verbose     Log all instruction tests [%s]\n", settings.verbose ? "x" : " ");
-  printf("  --validate    Use instruction validation [%s]\n", settings.validate ? "x" : " ");
+  printf("  --help         Show usage only\n");
+  printf("  --verbose      Show only assembling errors [%s]\n", settings.verbose ? "x" : " ");
+  printf("  --validate     Use instruction validation [%s]\n", settings.validate ? "x" : " ");
+  printf("  --arch=<ARCH>  Select architecture to run ('all' by default)\n");
   printf("\n");
 
+  printf("Architectures:\n");
+#if !defined(ASMJIT_NO_X86)
+  printf("  --arch=x86     32-bit X86 architecture (X86)\n");
+  printf("  --arch=x64     64-bit X86 architecture (X86_64)\n");
+#endif
+#if !defined(ASMJIT_NO_AARCH64)
+  printf("  --arch=aarch64 64-bit ARM architecture (AArch64)\n");
+#endif
+  printf("\n");
   if (cmdLine.hasArg("--help"))
     return 0;
 
