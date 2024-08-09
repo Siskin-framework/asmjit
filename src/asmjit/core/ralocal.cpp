@@ -137,10 +137,6 @@ Error RALocalAllocator::switchToAssignment(PhysToWorkMap* dstPhysToWorkMap, cons
   dst.initMaps(dstPhysToWorkMap, _tmpWorkToPhysMap);
   dst.assignWorkIdsFromPhysIds();
 
-  // TODO: Remove this - finally enable this functionality.
-  if (tryMode)
-    return kErrorOk;
-
   for (RegGroup group : RegGroupVirtValues{}) {
     // STEP 1
     // ------
@@ -598,7 +594,10 @@ Error RALocalAllocator::allocInst(InstNode* node) noexcept {
             if (rmSize <= workReg->virtReg()->virtSize()) {
               Operand& op = node->operands()[opIndex];
               op = _pass->workRegAsMem(workReg);
-              op.as<BaseMem>().setSize(rmSize);
+
+              // NOTE: We cannot use `x86::Mem::setSize()` from here, so let's manipulate the signature directly.
+              op._signature.setSize(rmSize);
+
               tiedReg->_useRewriteMask = 0;
 
               tiedReg->markUseDone();
