@@ -203,7 +203,7 @@ static ASMJIT_INLINE_NODEBUG constexpr bool bitTest(T x, IndexT n) noexcept {
 // Tests whether the given `value` is a consecutive mask of bits that starts at
 // the least significant bit.
 template<typename T>
-static ASMJIT_INLINE_NODEBUG constexpr bool isLsbMask(const T& value) {
+static ASMJIT_INLINE_NODEBUG constexpr bool isLsbMask(const T& value) noexcept {
   typedef typename std::make_unsigned<T>::type U;
   return value && ((U(value) + 1u) & U(value)) == 0;
 }
@@ -214,7 +214,7 @@ static ASMJIT_INLINE_NODEBUG constexpr bool isLsbMask(const T& value) {
 // This function is similar to \ref isLsbMask(), but the mask doesn't have to
 // start at a least significant bit.
 template<typename T>
-static ASMJIT_INLINE_NODEBUG constexpr bool isConsecutiveMask(const T& value) {
+static ASMJIT_INLINE_NODEBUG constexpr bool isConsecutiveMask(const T& value) noexcept {
   typedef typename std::make_unsigned<T>::type U;
   return value && isLsbMask((U(value) - 1u) | U(value));
 }
@@ -544,7 +544,7 @@ namespace Internal {
   inline T addOverflowFallback(T x, T y, FastUInt8* of) noexcept {
     typedef typename std::make_unsigned<T>::type U;
 
-    U result = U(x) + U(y);
+    U result = U(U(x) + U(y));
     *of = FastUInt8(*of | FastUInt8(isUnsigned<T>() ? result < U(x) : T((U(x) ^ ~U(y)) & (U(x) ^ result)) < 0));
     return T(result);
   }
